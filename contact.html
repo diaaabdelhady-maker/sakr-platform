@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ar">
+    <head>
+        <meta charset="UTF-8">
+        <title>CONTACT US</title>
+        <link rel="stylesheet" href="style.css?v=2">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Share+Tech&display=swap" rel="stylesheet"> 
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <link rel="icon" href="logo.png" type="image/png">
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+        <style>
+            .support-section {
+                text-align: center;
+                width: 100%;
+                max-width: 400px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+
+            .support-title {
+                font-size: 26px;
+                color: #fff;
+                margin-bottom: 30px;
+                text-transform: uppercase;
+                letter-spacing: 3px;
+                font-family: 'Share Tech', sans-serif;
+                text-shadow: 0 0 15px rgba(255, 255, 255, 0.5), 0 0 30px rgba(0, 238, 255, 0.2);
+                animation: pulseGlow 2s infinite alternate;
+            }
+
+            /* أنيميشن نبض خفيف لعنوان القسم */
+            @keyframes pulseGlow {
+                0% { text-shadow: 0 0 10px rgba(255,255,255,0.3); }
+                100% { text-shadow: 0 0 20px rgba(0, 238, 255, 0.6), 0 0 30px rgba(0, 238, 255, 0.4); }
+            }
+
+            .btn-group-vertical {
+                display: flex;
+                flex-direction: column;
+                gap: 25px;
+            }
+
+            /* التصميم الإعجازي للأزرار */
+            .cool-btn {
+                position: relative;
+                padding: 16px 35px;
+                font-size: 19px;
+                font-family: 'Share Tech', sans-serif;
+                font-weight: bold;
+                color: #fff;
+                border: none;
+                border-radius: 50px;
+                cursor: pointer;
+                overflow: hidden;
+                text-decoration: none;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 15px; /* مسافة بين اللوجو والكتابة */
+                text-transform: uppercase;
+                letter-spacing: 1.5px;
+                transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+                            box-shadow 0.4s ease, 
+                            filter 0.3s ease;
+                background-size: 200% auto;
+            }
+
+            /* أيقونات البرامج داخل الأزرار */
+            .cool-btn i {
+                font-size: 24px;
+                transition: transform 0.4s ease;
+            }
+
+            /* ألوان وتوهج نيون مخصص لكل منصة */
+            .btn-whatsapp {
+                background: linear-gradient(45deg, #128C7E, #25D366, #128C7E);
+                box-shadow: 0 0 20px rgba(37, 211, 102, 0.4);
+            }
+
+            .btn-facebook {
+                background: linear-gradient(45deg, #0056b3, #1877F2, #0056b3);
+                box-shadow: 0 0 20px rgba(24, 119, 242, 0.4);
+            }
+
+            .btn-telegram {
+                background: linear-gradient(45deg, #0088cc, #229ED9, #0088cc);
+                box-shadow: 0 0 20px rgba(0, 136, 204, 0.4);
+            }
+
+            /* تفاعل الزر عند حرك الماوس (Hover Animations) */
+            .cool-btn:hover {
+                transform: translateY(-7px) scale(1.05);
+                filter: brightness(1.2);
+                background-position: right center; /* تحريك التدرج اللوني */
+            }
+
+            /* حركة الأيقونة فور مرور الماوس */
+            .cool-btn:hover i {
+                transform: rotate(360deg) scale(1.2);
+            }
+
+            /* تفعيل التوهج الشديد عند الـ Hover */
+            .btn-whatsapp:hover { box-shadow: 0 0 35px rgba(37, 211, 102, 0.8); }
+            .btn-facebook:hover { box-shadow: 0 0 35px rgba(24, 119, 242, 0.8); }
+            .btn-telegram:hover { box-shadow: 0 0 35px rgba(0, 136, 204, 0.8); }
+
+            /* تأثير الضغط الحقيقي للزر */
+            .cool-btn:active {
+                transform: translateY(-2px) scale(0.97);
+            }
+
+            /* تأثير لمعان البرق المتحرك اللانهائي المذهل */
+            .cool-btn::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -150%;
+                width: 50%;
+                height: 100%;
+                background: linear-gradient(
+                    to right,
+                    rgba(255, 255, 255, 0) 0%,
+                    rgba(255, 255, 255, 0.6) 50%,
+                    rgba(255, 255, 255, 0) 100%
+                );
+                transform: skewX(-30deg);
+            }
+
+            /* تشغيل أنيميشن اللمعان باستمرار وبشكل أسرع عند الوقوف على الزر */
+            .cool-btn:hover::before {
+                animation: lightningShine 1.5s infinite ease-in-out;
+            }
+
+            @keyframes lightningShine {
+                0% { left: -150%; }
+                50% { left: 150%; }
+                100% { left: 150%; }
+            }
+        </style>
+        <!-- Settings System Initializer -->
+    <script>
+      (function() {
+        const theme = localStorage.getItem('settings-theme') || 'dark';
+        const accent = localStorage.getItem('settings-accent') || 'gold';
+        const fontSize = localStorage.getItem('settings-fontSize') || 'normal';
+        const sidebarSide = localStorage.getItem('settings-sidebarSide') || 'right';
+        const animations = localStorage.getItem('settings-animations') || 'normal';
+        document.documentElement.setAttribute('data-theme', theme);
+        document.documentElement.setAttribute('data-accent', accent);
+        document.documentElement.setAttribute('data-font-size', fontSize);
+        document.documentElement.setAttribute('data-sidebar-side', sidebarSide);
+        document.documentElement.setAttribute('data-animations', animations);
+      })();
+    </script>
+    <script src="settings.js" defer></script>
+</head>
+    <body>
+    <div id="menuOverlay" class="menu-overlay"></div>
+
+    <div class="upbox">
+       &nbsp;&nbsp;&nbsp;&nbsp;<div class="hh"> <img src="logo.png" width="70px" alt="Logo"></div>
+       
+       <span class="brand-name">AMR SAKR</span>
+       <div class="upboxs">
+        <button id="menuBtn" class="menu-btn" type="button" aria-label="Open menu">
+          <img src="menu.png" width="60px" alt="Menu">
+        </button>
+       </div>
+    </div>
+
+    <aside id="sideMenu" class="side-menu" aria-label="Main menu">
+      <button id="closeMenu" class="close-menu" type="button" aria-label="Close menu">×</button>
+      <h2>AMR SAKR</h2>
+      <a href="device-detect.html"><span class="material-symbols-rounded menu-icon">download</span>DOWNLOAD AS AN APP</a>
+<a href="code.html">SIGN IN</a>
+
+      <a href="contact.html">CONTACT</a>
+      <a href="designer.html">THE WEB DESIGNER</a>
+      <a href="#" onclick="localStorage.removeItem('savedCode');">SIGN OUT</a>
+    </aside>
+
+    <main class="hero-wrap">
+      <section class="hero-card hero-split">
+        <article class="hero-visual">
+          <p class="eyebrow">unlock the wonders of science</p>
+          <img src="logo.png" width="350px" id="mlogo" alt="AMR SAKR logo">
+          <h1 class="hero-title">AMR SAKR</h1>
+          <p class="hero-text">best science platform <br> ( dive into the world of science )</p>
+        </article>
+
+        <aside class="hero-actions">
+          <div class="support-section">
+            <h3 class="support-title">Contact Support</h3>
+            <div class="btn-group-vertical">
+              
+              <a href="https://wa.me/201274191434" target="_blank" class="cool-btn btn-whatsapp">
+                <i class="fa-brands fa-whatsapp"></i> WhatsApp
+              </a>
+              
+              <a href="ضع_رابط_الفيسبوك_هنا" target="_blank" class="cool-btn btn-facebook">
+                <i class="fa-brands fa-facebook-f"></i> Facebook
+              </a>
+              
+              <a href="ضع_رابط_التليجرام_هنا" target="_blank" class="cool-btn btn-telegram">
+                <i class="fa-brands fa-telegram"></i> Telegram
+              </a>
+
+            </div>
+          </div>
+        </aside>
+
+      </section>
+    </main>
+
+    <script>
+      const menuBtn = document.getElementById('menuBtn');
+      const sideMenu = document.getElementById('sideMenu');
+      const overlay = document.getElementById('menuOverlay');
+      const closeMenu = document.getElementById('closeMenu');
+
+      function openMenu() {
+        sideMenu.classList.add('open');
+        overlay.classList.add('show');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeMenuPanel() {
+        sideMenu.classList.remove('open');
+        overlay.classList.remove('show');
+        document.body.style.overflow = '';
+      }
+
+      menuBtn.addEventListener('click', openMenu);
+      closeMenu.addEventListener('click', closeMenuPanel);
+      overlay.addEventListener('click', closeMenuPanel);
+
+      document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
+          closeMenuPanel();
+        }
+      });
+    </script>
+    </body>
+</html>

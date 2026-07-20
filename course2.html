@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RECORDED SESSIONS</title>
+  <link rel="stylesheet" href="style.css?v=2">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech&display=swap" rel="stylesheet">
+  <link rel="icon" href="logo.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@48,400,1,0" rel="stylesheet" />
+  <style>
+    .course-shell { width: min(100%, 1100px); margin: 0 auto; padding: 18px 14px 44px; box-sizing: border-box; }
+    .course-grid { display: grid; gap: 14px; margin-top: 14px; }
+    .course-card { background: linear-gradient(145deg, rgba(255,255,255,0.10), rgba(255,255,255,0.04)); border: 1px solid rgba(255,255,255,0.14); border-radius: 18px; padding: 14px; box-shadow: 0 18px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.10); margin-bottom: 16px; }
+    
+    /* FIX: Width matches the card, height scales automatically to prevent empty side borders */
+    .course-card img { width: 100%; height: auto; object-fit: contain; border-radius: 14px; display: block; }
+    
+    .course-card h3 { margin: 10px 0 6px; color: #fff; font-size: 18px; }
+    .course-card p { color: rgba(255,255,255,0.86); font-size: 14px; margin: 4px 0; }
+    .course-pill { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 6px 10px; background: rgba(255,255,255,0.10); border: 1px solid rgba(255,255,255,0.12); color: #ffe56b; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
+    .course-card .btn { min-height: 48px; font-size: 18px; border-radius: 14px; margin-top: 10px; }
+    .video-overlay { position: fixed; inset: 0; z-index: 1200; display: flex; justify-content: center; align-items: center; background: rgba(2, 6, 23, 0.86); padding: 18px; backdrop-filter: blur(14px); }
+    .video-panel { width: min(100%, 1080px); border-radius: 24px; padding: 10px; background: linear-gradient(145deg, rgba(255,255,255,0.16), rgba(255,255,255,0.06)); border: 1px solid rgba(255,255,255,0.14); box-shadow: 0 28px 80px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.18); position: relative; overflow: hidden; }
+    .video-stage { position: relative; border-radius: 18px; overflow: hidden; background: #000; aspect-ratio: 16 / 9; }
+    .video-stage iframe { width: 100%; height: 100%; border: 0; background: #000; display: block; }
+    .video-loading-line { position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, transparent, rgba(255,190,61,0.95), transparent); transform: translateX(-100%); opacity: 0; pointer-events: none; z-index: 5; box-shadow: 0 0 18px rgba(255,190,61,0.55); }
+    .video-stage.is-loading .video-loading-line { opacity: 1; animation: video-loading-sweep 1.2s ease-in-out infinite; }
+    .video-stage.is-paused .video-loading-line { opacity: 0.7; animation: video-loading-pulse 1s ease-in-out infinite alternate; }
+    @keyframes video-loading-sweep { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+    @keyframes video-loading-pulse { 0% { opacity: 0.35; filter: brightness(0.8); } 100% { opacity: 0.95; filter: brightness(1.2); } }
+    .video-topbar { display: flex; justify-content: space-between; align-items: center; padding: 8px 8px 10px; color: #fff; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
+    .video-topbar .player-title { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; }
+    .panel-dot { width: 8px; height: 8px; border-radius: 50%; background: linear-gradient(135deg, #ffbe3d, #ff6a3d); box-shadow: 0 0 12px rgba(255,190,61,0.75); }
+    .video-close { border: none; background: rgba(255,255,255,0.12); color: #fff; border-radius: 999px; width: 38px; height: 38px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-size: 20px; transition: transform .2s ease, background .2s ease; }
+    .video-close:hover { background: rgba(255,255,255,0.2); transform: scale(1.04); }
+    .video-control-bar { position: absolute; left: 12px; right: 12px; bottom: 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 10px; border-radius: 999px; background: rgba(7, 11, 25, 0.72); border: 1px solid rgba(255,255,255,0.16); box-shadow: 0 12px 30px rgba(0,0,0,0.32); backdrop-filter: blur(14px); }
+    .control-group { display: flex; align-items: center; gap: 6px; }
+    .control-btn { border: none; color: #fff; background: rgba(255,255,255,0.12); width: 34px; height: 34px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-size: 15px; transition: transform .2s ease, background .2s ease; }
+    .control-btn:hover { background: rgba(255,255,255,0.24); transform: translateY(-1px); }
+    .control-btn .material-symbols-rounded { font-family: 'Material Symbols Rounded'; font-size: 16px; line-height: 1; display: inline-flex; align-items: center; justify-content: center; font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    .control-btn.skip-btn { width: auto; padding: 0 8px; border-radius: 999px; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; }
+    .settings-menu { position: relative; display: inline-flex; align-items: center; }
+    .settings-popup { position: absolute; right: 0; bottom: 58px; display: none; flex-direction: column; gap: 10px; min-width: 220px; padding: 12px; border-radius: 18px; background: rgba(7, 11, 25, 0.96); border: 1px solid rgba(255,255,255,0.18); box-shadow: 0 18px 40px rgba(0,0,0,0.45); backdrop-filter: blur(16px); z-index: 6; }
+    .settings-popup::before { content: ""; position: absolute; right: 16px; bottom: -8px; width: 14px; height: 14px; transform: rotate(45deg); background: rgba(7, 11, 25, 0.96); border-right: 1px solid rgba(255,255,255,0.18); border-bottom: 1px solid rgba(255,255,255,0.18); }
+    .settings-popup.is-open { display: flex; }
+    .settings-row { display: flex; flex-direction: column; gap: 6px; color: #fff; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+    .settings-row .settings-group { display: flex; flex-wrap: wrap; gap: 6px; }
+    .settings-btn { border: 1px solid rgba(255,255,255,0.16); border-radius: 999px; background: rgba(255,255,255,0.12); color: #fff; padding: 7px 10px; font-size: 12px; cursor: pointer; transition: all .2s ease; min-height: 32px; }
+    .settings-btn:hover { background: rgba(255,255,255,0.2); transform: translateY(-1px); }
+    .settings-btn.is-active { border-color: #ffbe3d; background: rgba(255,190,61,0.26); color: #ffe7a2; box-shadow: inset 0 0 0 1px rgba(255,190,61,0.35); }
+    .progress-slider { width: min(280px, 38vw); accent-color: #ffbe3d; cursor: pointer; }
+    .time-label { color: rgba(255,255,255,0.86); font-size: 12px; min-width: 44px; text-align: center; font-variant-numeric: tabular-nums; }
+    .video-panel.is-fullscreen { width: 100vw; height: 100vh; max-width: none; max-height: none; border-radius: 0; padding: 0; display: flex; flex-direction: column; background: #000; }
+    .video-panel.is-fullscreen .video-topbar { position: absolute; inset: 0 0 auto 0; z-index: 2; padding: 12px 16px; background: linear-gradient(180deg, rgba(0,0,0,0.6), transparent); }
+    .video-panel.is-fullscreen .video-stage { flex: 1; width: 100%; height: 100%; aspect-ratio: auto; border-radius: 0; }
+    .video-panel.is-fullscreen .video-control-bar { bottom: 8px; left: 8px; right: 8px; padding: 7px 8px; }
+    .student-flow-badge { position: fixed; top: 12%; left: 3%; z-index: 10; display: inline-flex; align-items: center; gap: 5px; padding: 6px 10px; border-radius: 999px; background: linear-gradient(135deg, rgba(8, 15, 36, 0.95), rgba(20, 33, 69, 0.95)); color: #fff7d6; border: 1px solid rgba(255, 255, 255, 0.35); font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; box-shadow: 0 12px 30px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.24); opacity: 0.98; animation: studentFlow 70s linear infinite; pointer-events: none; backdrop-filter: blur(12px); max-width: calc(100vw - 24px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    @keyframes studentFlow { 0% { left: 3%; top: 8%; opacity: 0.25; transform: scale(0.9); } 12% { left: 10%; top: 74%; opacity: 0.55; transform: scale(0.97); } 24% { left: 34%; top: 14%; opacity: 0.4; transform: scale(1); } 38% { left: 62%; top: 72%; opacity: 0.6; transform: scale(0.95); } 56% { left: 50%; top: 24%; opacity: 0.5; transform: scale(0.98); } 74% { left: 14%; top: 44%; opacity: 0.65; transform: scale(0.97); } 90% { left: 76%; top: 10%; opacity: 0.3; transform: scale(0.94); } 100% { left: 84%; top: 36%; opacity: 0.22; transform: scale(0.9); } }
+    @media (max-width: 900px) { .video-control-bar { padding: 7px 8px; gap: 7px; } .control-btn { width: 32px; height: 32px; } .control-btn .material-symbols-rounded { font-size: 15px; } .control-btn.skip-btn { font-size: 10px; padding: 0 7px; } .progress-slider { width: min(220px, 36vw); } .video-panel.is-fullscreen .video-control-bar { bottom: 6px; left: 6px; right: 6px; padding: 6px 7px; } }
+    @media (max-width: 680px) { .video-control-bar { flex-wrap: nowrap; justify-content: center; padding: 6px 7px; border-radius: 16px; gap: 6px; bottom: 6px; left: 6px; right: 6px; } .control-group { gap: 5px; } .control-btn { width: 30px; height: 30px; } .control-btn .material-symbols-rounded { font-size: 15px; } .control-btn.skip-btn { padding: 0 6px; font-size: 9px; min-height: 30px; } .progress-slider { width: min(100%, 170px); order: 2; } .time-label { min-width: 34px; font-size: 11px; } .student-flow-badge { font-size: 9px; padding: 5px 8px; } }
+    @media (min-width: 850px) { .course-grid { grid-template-columns: repeat(2, 1fr); } }
+    /* ===================================================
+   THE BEST PREMIUM FLOATING VIEWS PILL STYLE
+=================================================== */
+.course-card {
+    position: relative !important; /* لجعل الكارت هو الأب الحاضن للبادج العائم */
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important; /* لمنع خروج توهج البادج عن إطار الكارت */
+}
+
+.course-card .course-pill {
+    position: absolute !important;
+    top: 24px !important;
+    right: 24px !important;
+    z-index: 5 !important;
+    
+    /* التصميم الزجاجي المضيء الفاخر */
+    background: linear-gradient(135deg, rgba(8, 15, 36, 0.9) 0%, rgba(1, 1, 31, 0.95) 100%) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    
+    /* الإطار والتوهج الذهبي المستقبلي */
+    border: 1px solid rgba(255, 215, 0, 0.4) !important;
+    color: #ffd700 !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), 
+                0 0 15px rgba(255, 215, 0, 0.15) !important;
+    
+    /* الخطوط والمحاذاة */
+    padding: 6px 14px !important;
+    font-size: 11.5px !important;
+    font-weight: 700 !important;
+    letter-spacing: 1.5px !important;
+    text-transform: uppercase !important;
+    border-radius: 30px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* تأثير أنيميشن نبضي خفيف للعين لجذب الانتباه */
+.course-card .course-pill::before {
+    content: '' !important;
+    width: 6px !important;
+    height: 6px !important;
+    background-color: #ffd700 !important;
+    border-radius: 50% !important;
+    display: inline-block !important;
+    box-shadow: 0 0 8px #ffd700 !important;
+    animation: pillPulse 2s infinite !important;
+}
+
+/* تأثير التمرير (Hover) على الكارت بالكامل */
+.course-card:hover .course-pill {
+    transform: translateY(-2px) scale(1.03) !important;
+    border-color: #ffe56b !important;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5), 
+                0 0 20px rgba(255, 215, 0, 0.3) !important;
+    color: #ffe56b !important;
+}
+
+@keyframes pillPulse {
+    0% { transform: scale(0.9); opacity: 0.6; }
+    50% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 12px #ffd700; }
+    100% { transform: scale(0.9); opacity: 0.6; }
+}
+
+/* تعديل متجاوب للهواتف الصغيرة */
+@media (max-width: 480px) {
+    .course-card .course-pill {
+        top: 18px !important;
+        right: 18px !important;
+        padding: 5px 10px !important;
+        font-size: 10px !important;
+        letter-spacing: 1px !important;
+    }
+}
+  </style>
+    <!-- Settings System Initializer -->
+    <script>
+      (function() {
+        const theme = localStorage.getItem('settings-theme') || 'dark';
+        const accent = localStorage.getItem('settings-accent') || 'gold';
+        const fontSize = localStorage.getItem('settings-fontSize') || 'normal';
+        const sidebarSide = localStorage.getItem('settings-sidebarSide') || 'right';
+        const animations = localStorage.getItem('settings-animations') || 'normal';
+        document.documentElement.setAttribute('data-theme', theme);
+        document.documentElement.setAttribute('data-accent', accent);
+        document.documentElement.setAttribute('data-font-size', fontSize);
+        document.documentElement.setAttribute('data-sidebar-side', sidebarSide);
+        document.documentElement.setAttribute('data-animations', animations);
+      })();
+    </script>
+    <script src="settings.js" defer></script>
+</head>
+<body>
+<script>
+(function(){
+  const hasAccess = !!(localStorage.getItem('savedCode') || localStorage.getItem('userId'));
+  if (!hasAccess) {
+    localStorage.removeItem('savedCode');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('completedLessons');
+    localStorage.removeItem('userRole');
+    window.location.replace('code.html');
+  }
+})();
+</script>
+  <div id="menuOverlay" class="menu-overlay"></div>
+
+  <div class="upbox">
+    &nbsp;&nbsp;&nbsp;&nbsp;<div class="hh"><img src="logo.png" width="70px" alt="Logo"></div>
+    <span class="brand-name">AMR SAKR</span>
+    <div class="upboxs">
+      <button id="menuBtn" class="menu-btn" type="button" aria-label="Open menu">
+        <img src="menu.png" width="60px" alt="Menu">
+      </button>
+    </div>
+  </div>
+
+  <aside id="sideMenu" class="side-menu" aria-label="Main menu">
+    <button id="closeMenu" class="close-menu" type="button" aria-label="Close menu"><span class="material-symbols-rounded">close</span></button>
+    <h2>AMR SAKR</h2>
+    <a href="device-detect.html"><span class="material-symbols-rounded menu-icon">download</span>DOWNLOAD AS AN APP</a>
+<a href="index.html"><span class="material-symbols-rounded menu-icon">home</span>HOME</a>
+    <a href="channel.html"><span class="material-symbols-rounded menu-icon">school</span>STUDENT PAGE</a>
+    <a href="designer.html"><span class="material-symbols-rounded menu-icon">brush</span>THE WEB DESIGNER</a>
+    <a href="#" onclick="localStorage.removeItem('savedCode'); window.location.href='index.html';"><span class="material-symbols-rounded menu-icon">logout</span>SIGN OUT</a>
+  </aside>
+
+  <main class="hero-wrap course-shell">
+    <section class="hero-card hero-split">
+      <article class="hero-visual">
+        <p class="eyebrow">MIDDLE 2</p>
+        <img src="logo.png" width="350px" id="mlogo" alt="AMR SAKR logo">
+        <h1 class="hero-title">YOUR LESSONS</h1>
+        <p class="hero-text">Open each lesson and watch the video directly from here.</p>
+      </article>
+    </section>
+
+    <section id="container" class="course-grid"></section>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, getDocs, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+  apiKey: "AIzaSyCS4KHbegH4qOWwE0rZmOboW7Cd4FgIW04",
+  authDomain: "course2-781a7.firebaseapp.com",
+  projectId: "course2-781a7",
+  storageBucket: "course2-781a7.firebasestorage.app",
+  messagingSenderId: "1012690578717",
+  appId: "1:1012690578717:web:9592763fcf801d0d6b45f4"
+};
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const container = document.getElementById("container");
+
+    function getYouTubeId(link) {
+      if (!link) return "";
+
+      const trimmed = link.trim();
+
+      try {
+        const url = new URL(trimmed);
+        const host = url.hostname.replace(/^www\./, "");
+
+        if (host === "youtube.com" || host === "m.youtube.com") {
+          if (url.searchParams.get("v")) return url.searchParams.get("v");
+          if (url.pathname.startsWith("/embed/")) return url.pathname.split("/")[2];
+          if (url.pathname.startsWith("/shorts/")) return url.pathname.split("/")[2];
+          if (url.pathname.startsWith("/live/")) return url.pathname.split("/")[2];
+        }
+
+        if (host === "youtu.be") {
+          return url.pathname.replace("/", "");
+        }
+      } catch (error) {
+        // fallback below
+      }
+
+      const patterns = [
+        /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/|m\.youtube\.com\/watch\?v=)([A-Za-z0-9_-]{11})/i,
+        /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/live\/)([A-Za-z0-9_-]{11})/i,
+        /[?&]v=([A-Za-z0-9_-]{11})/i
+      ];
+
+      for (const pattern of patterns) {
+        const match = trimmed.match(pattern);
+        if (match && match[1]) {
+          return match[1];
+        }
+      }
+
+      return "";
+    }
+
+    function makeCard(data, id) {
+      const card = document.createElement("article");
+      card.className = "course-card";
+
+      const viewsLeft = Number(data.viewsLeft ?? data.viewsLimit ?? 4);
+      const isUnlimited = Boolean(data.unlimitedViews) || Number(data.viewsLimit ?? 0) === 0;
+      const buttonLabel = isUnlimited || viewsLeft > 0 ? "WATCH" : "NO VIEWS LEFT";
+      const viewsLabel = isUnlimited ? "NOT LIMITED" : `${viewsLeft} ${viewsLeft === 1 ? 'VIEW' : 'VIEWS'} LEFT`;
+
+      card.innerHTML = `
+        
+        <img src="${data.image || 'logo.png'}" alt="${data.name || 'Lesson'}">
+        <h3>${data.name || 'Untitled lesson'}</h3>
+        <p>${data.link ? 'Tap the button below to open the lesson video.' : 'No video link is available yet.'}</p>
+        <p class="course-pill">${viewsLabel}</p>
+        <button class="btn" type="button" ${data.link ? '' : 'disabled'}>${buttonLabel}</button>
+      `;
+
+      const btn = card.querySelector("button");
+      btn.addEventListener("click", () => openVideo(data.link, id, viewsLeft, isUnlimited));
+      return card;
+    }
+
+    async function loadButtons() {
+      container.innerHTML = "";
+      const snap = await getDocs(collection(db, "course1_lessons"));
+      snap.forEach((item) => {
+        container.appendChild(makeCard(item.data(), item.id));
+      });
+    }
+
+    function formatTime(seconds) {
+      const safe = Number.isFinite(seconds) ? Math.max(0, Math.floor(seconds)) : 0;
+      const mins = Math.floor(safe / 60);
+      const secs = safe % 60;
+      return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+    }
+
+    function ensureYouTubeApi(callback) {
+      if (window.YT && window.YT.Player) {
+        callback();
+        return;
+      }
+
+      if (!document.getElementById("yt-iframe-api")) {
+        const script = document.createElement("script");
+        script.id = "yt-iframe-api";
+        script.src = "https://www.youtube.com/iframe_api";
+        document.body.appendChild(script);
+      }
+
+      const previousReady = window.onYouTubeIframeAPIReady;
+      window.onYouTubeIframeAPIReady = function () {
+        if (previousReady) previousReady();
+        callback();
+      };
+    }
+
+    window.showNoViewsMessage = function (lessonName) {
+      const wrapper = document.createElement("div");
+      wrapper.className = "video-overlay";
+      const alertTitle = lessonName || "this lesson";
+      wrapper.innerHTML = `
+        <div class="video-panel" style="max-width: 560px; border: 1px solid rgba(255,255,255,0.22); box-shadow: 0 22px 80px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.16);">
+          <div class="video-topbar" style="padding-bottom: 4px;">
+            <div class="player-title"><span class="panel-dot"></span>lesson access</div>
+            <button class="video-close" type="button" aria-label="Close message">×</button>
+          </div>
+          <div style="padding: 28px 24px 30px; color: #fff; text-align: center; background: linear-gradient(145deg, rgba(255,255,255,0.14), rgba(255,255,255,0.06)); border-radius: 20px;">
+            <div style="width: 84px; height: 84px; margin: 0 auto 14px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(135deg, rgba(255,190,61,0.3), rgba(255,106,61,0.3)); border: 1px solid rgba(255,255,255,0.18); box-shadow: 0 0 32px rgba(255,190,61,0.24); font-size: 34px; font-weight: 800; color: #ffe7a2; letter-spacing: 0.02em;">!</div>
+            <h3 style="margin: 0 0 10px; font-size: 24px; font-weight: 800; letter-spacing: 0.03em;">Access stopped</h3>
+            <p style="margin: 0 0 10px; font-size: 16px; line-height: 1.7; color: rgba(255,255,255,0.92);">
+              You have no views left for <strong style="color: #ffe7a2;">${alertTitle}</strong>.
+            </p>
+            <p style="margin: 0 0 14px; font-size: 14px; color: rgba(255,255,255,0.78);">
+              Please contact the teacher to unlock more access.
+            </p>
+            <button class="btn" type="button" style="min-height: 44px; border-radius: 999px; padding: 0 18px; font-size: 15px; margin-top: 4px;" data-role="close-popup">Close</button>
+          </div>
+        </div>
+      `;
+
+      const closeBtn = wrapper.querySelector(".video-close");
+      const actionBtn = wrapper.querySelector('[data-role="close-popup"]');
+      const closeOverlay = () => {
+        wrapper.remove();
+        document.body.style.overflow = "";
+      };
+
+      const playAlertTone = () => {
+        try {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (!AudioContextClass) return;
+          const context = new AudioContextClass();
+          const oscillator = context.createOscillator();
+          const gainNode = context.createGain();
+          oscillator.type = "triangle";
+          oscillator.frequency.setValueAtTime(760, context.currentTime);
+          oscillator.frequency.exponentialRampToValueAtTime(540, context.currentTime + 0.18);
+          gainNode.gain.setValueAtTime(0.0001, context.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.16, context.currentTime + 0.01);
+          gainNode.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.24);
+          oscillator.connect(gainNode);
+          gainNode.connect(context.destination);
+          oscillator.start();
+          oscillator.stop(context.currentTime + 0.25);
+          setTimeout(() => context.close().catch(() => {}), 400);
+        } catch (error) {
+          console.warn("Alert sound unavailable", error);
+        }
+      };
+
+      closeBtn?.addEventListener("click", closeOverlay);
+      actionBtn?.addEventListener("click", closeOverlay);
+      wrapper.addEventListener("click", (event) => {
+        if (event.target === wrapper) closeOverlay();
+      });
+      document.body.appendChild(wrapper);
+      document.body.style.overflow = "hidden";
+      playAlertTone();
+    };
+
+    window.openVideo = function (link, docId, viewsLeft, isUnlimited) {
+      if (!isUnlimited && viewsLeft <= 0) {
+        window.showNoViewsMessage("this lesson");
+        return;
+      }
+
+      const videoId = getYouTubeId(link);
+
+      if (!link || !link.trim()) {
+        alert("This video link is invalid. Please update it in the admin panel.");
+        return;
+      }
+
+      if (!videoId) {
+        alert("This link is not a valid YouTube video link.");
+        return;
+      }
+
+      const studentBadge = (localStorage.getItem("userId") || localStorage.getItem("savedCode") || "ID").toString().trim();
+      const wrapper = document.createElement("div");
+      wrapper.className = "video-overlay";
+      wrapper.innerHTML = `
+        <div class="video-panel">
+          <div class="video-topbar">
+            <div class="player-title"><span class="panel-dot"></span>lesson player</div>
+            <button class="video-close" type="button" aria-label="Close video">×</button>
+          </div>
+          <div class="video-stage">
+            <div class="video-loading-line" aria-hidden="true"></div>
+            <iframe
+              id="lesson-player-${docId}"
+              src="https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&controls=0&fs=0&playsinline=1&enablejsapi=1&showinfo=0&iv_load_policy=3&disablekb=1&autohide=1&cc_load_policy=0"
+              title="Lesson video"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen
+              loading="lazy"></iframe>
+            <div class="video-control-bar">
+              <div class="control-group">
+                <button class="control-btn skip-btn" data-action="back10" type="button">◀◀</button>
+                <button class="control-btn" data-action="toggle" type="button">▶</button>
+                <button class="control-btn skip-btn" data-action="forward10" type="button">▶▶</button>
+                <span class="time-label" data-role="current">00:00</span>
+                <input class="progress-slider" type="range" min="0" max="100" value="0" />
+                <span class="time-label" data-role="duration">00:00</span>
+              </div>
+              <div class="control-group">
+                <div class="settings-menu">
+                  <button class="control-btn settings-trigger" data-action="settings" type="button" aria-label="Open playback settings" aria-expanded="false">
+                    <span class="material-symbols-rounded">settings</span>
+                  </button>
+                  <div class="settings-popup" role="menu" aria-label="Playback settings">
+                    <div class="settings-row">
+                      <span>Playback speed</span>
+                      <div class="settings-group">
+                        <button class="settings-btn speed-btn" data-speed="0.75" type="button">0.75×</button>
+                        <button class="settings-btn speed-btn is-active" data-speed="1" type="button">1×</button>
+                        <button class="settings-btn speed-btn" data-speed="1.25" type="button">1.25×</button>
+                        <button class="settings-btn speed-btn" data-speed="1.5" type="button">1.5×</button>
+                        <button class="settings-btn speed-btn" data-speed="2" type="button">2×</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <button class="control-btn" data-action="mute" type="button"><span class="material-symbols-rounded">volume_up</span></button>
+                <button class="control-btn" data-action="fullscreen" type="button"><span class="material-symbols-rounded">fullscreen</span></button>
+              </div>
+            </div>
+            <div class="student-flow-badge">${studentBadge}</div>
+          </div>
+        </div>
+      `;
+
+      const closeBtn = wrapper.querySelector(".video-close");
+      const playToggle = wrapper.querySelector('[data-action="toggle"]');
+      const muteToggle = wrapper.querySelector('[data-action="mute"]');
+      const fullscreenToggle = wrapper.querySelector('[data-action="fullscreen"]');
+      const back10Btn = wrapper.querySelector('[data-action="back10"]');
+      const forward10Btn = wrapper.querySelector('[data-action="forward10"]');
+      const progressSlider = wrapper.querySelector(".progress-slider");
+      const currentLabel = wrapper.querySelector('[data-role="current"]');
+      const durationLabel = wrapper.querySelector('[data-role="duration"]');
+      const settingsTrigger = wrapper.querySelector(".settings-trigger");
+      const settingsPopup = wrapper.querySelector(".settings-popup");
+      const playerId = `lesson-player-${docId}`;
+      const fullscreenPanel = wrapper.querySelector(".video-panel");
+      let player = null;
+      let timer = null;
+      let playerReady = false;
+      let currentSpeed = 1;
+      let watchSessionStarted = false;
+      let watchSessionSeconds = 0;
+      let watchSessionDeducted = false;
+      let watchSessionTimer = null;
+      const stage = wrapper.querySelector(".video-stage");
+
+      function setLoadingVisual(state) {
+        if (!stage) return;
+        const buffering = state === window.YT?.PlayerState?.BUFFERING;
+        const paused = state === window.YT?.PlayerState?.PAUSED;
+        const playing = state === window.YT?.PlayerState?.PLAYING;
+        stage.classList.toggle("is-loading", buffering);
+        stage.classList.toggle("is-paused", paused && !playing);
+        if (playing || state === window.YT?.PlayerState?.ENDED || state === window.YT?.PlayerState?.CUED) {
+          stage.classList.remove("is-loading", "is-paused");
+        }
+      }
+
+      function updateSpeedButtons() {
+        wrapper.querySelectorAll(".speed-btn").forEach((btn) => {
+          btn.classList.toggle("is-active", Number(btn.dataset.speed) === currentSpeed);
+        });
+      }
+
+      function setSettingsMenuOpen(isOpen) {
+        settingsPopup?.classList.toggle("is-open", isOpen);
+        settingsTrigger?.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      }
+
+      function applyPlaybackRate(rate) {
+        currentSpeed = rate;
+        updateSpeedButtons();
+        if (player && typeof player.setPlaybackRate === "function") {
+          try { player.setPlaybackRate(rate); } catch (error) { console.error(error); }
+        }
+      }
+
+      function destroyPlayer() {
+        if (timer) clearInterval(timer);
+        if (watchSessionTimer) clearInterval(watchSessionTimer);
+        if (player && typeof player.destroy === "function") {
+          try { player.destroy(); } catch (error) { console.error(error); }
+        }
+        wrapper.remove();
+        document.body.style.overflow = "";
+      }
+
+      function syncProgress() {
+        if (!player || !playerReady || typeof player.getCurrentTime !== "function") return;
+        const currentTime = player.getCurrentTime();
+        const totalTime = player.getDuration();
+        if (Number.isFinite(currentTime)) currentLabel.textContent = formatTime(currentTime);
+        if (Number.isFinite(totalTime) && totalTime > 0) {
+          durationLabel.textContent = formatTime(totalTime);
+          const percent = (currentTime / totalTime) * 100;
+          progressSlider.value = Number.isFinite(percent) ? percent : 0;
+        }
+      }
+
+      function syncPlayState() {
+        if (!player || typeof player.getPlayerState !== "function") return;
+        const state = player.getPlayerState();
+        const isPlaying = state === window.YT?.PlayerState?.PLAYING;
+        playToggle.textContent = isPlaying ? "❚❚" : "▶";
+      }
+
+      closeBtn.addEventListener("click", destroyPlayer);
+      wrapper.addEventListener("click", (event) => {
+        if (event.target === wrapper) {
+          destroyPlayer();
+        } else if (!event.target.closest(".settings-menu")) {
+          setSettingsMenuOpen(false);
+        }
+      });
+      settingsTrigger?.addEventListener("click", (event) => {
+        event.stopPropagation();
+        setSettingsMenuOpen(!settingsPopup?.classList.contains("is-open"));
+      });
+      wrapper.querySelectorAll(".speed-btn").forEach((btn) => {
+        btn.addEventListener("click", () => applyPlaybackRate(Number(btn.dataset.speed)));
+      });
+      updateSpeedButtons();
+      playToggle.addEventListener("click", () => {
+        if (!player || typeof player.getPlayerState !== "function") return;
+        const state = player.getPlayerState();
+        if (state === window.YT?.PlayerState?.PLAYING) {
+          player.pauseVideo();
+        } else {
+          player.playVideo();
+        }
+      });
+      back10Btn.addEventListener("click", () => {
+        if (!player || typeof player.getCurrentTime !== "function") return;
+        const target = Math.max(0, player.getCurrentTime() - 10);
+        player.seekTo(target, true);
+        syncProgress();
+      });
+      forward10Btn.addEventListener("click", () => {
+        if (!player || typeof player.getCurrentTime !== "function") return;
+        const total = player.getDuration() || 0;
+        const target = Math.min(total, player.getCurrentTime() + 10);
+        player.seekTo(target, true);
+        syncProgress();
+      });
+      muteToggle.addEventListener("click", () => {
+        if (!player) return;
+        if (player.isMuted()) {
+          player.unMute();
+          muteToggle.innerHTML = '<span class="material-symbols-rounded">volume_up</span>';
+        } else {
+          player.mute();
+          muteToggle.innerHTML = '<span class="material-symbols-rounded">volume_off</span>';
+        }
+      });
+      fullscreenToggle.addEventListener("click", () => {
+        if (!document.fullscreenElement) {
+          fullscreenPanel?.requestFullscreen?.({ navigationUI: "hide" }).catch(() => wrapper.requestFullscreen?.());
+        } else {
+          document.exitFullscreen?.();
+        }
+      });
+      document.addEventListener("fullscreenchange", () => {
+        if (!fullscreenPanel) return;
+        fullscreenPanel.classList.toggle("is-fullscreen", Boolean(document.fullscreenElement));
+        const icon = document.fullscreenElement ? "fullscreen_exit" : "fullscreen";
+        fullscreenToggle.innerHTML = `<span class="material-symbols-rounded">${icon}</span>`;
+      });
+      progressSlider.addEventListener("input", () => {
+        if (!player || typeof player.seekTo !== "function") return;
+        const total = player.getDuration() || 1;
+        const seekTo = (Number(progressSlider.value) / 100) * total;
+        player.seekTo(seekTo, true);
+      });
+
+      document.body.appendChild(wrapper);
+      document.body.style.overflow = "hidden";
+
+      const watchGuardKey = `watched_${docId}`;
+      const alreadyRecorded = localStorage.getItem(watchGuardKey);
+      if (alreadyRecorded) {
+        watchSessionDeducted = true;
+      }
+
+      function attemptViewDeduction() {
+        if (watchSessionDeducted || watchSessionSeconds < 30 * 60 || viewsLeft <= 0) return;
+        if (localStorage.getItem(watchGuardKey)) {
+          watchSessionDeducted = true;
+          return;
+        }
+        watchSessionDeducted = true;
+        localStorage.setItem(watchGuardKey, "true");
+        const ref = doc(db, "course1_lessons", docId);
+        updateDoc(ref, { viewsLeft: increment(-1) })
+          .then(() => {
+            alert(`One view was deducted from this lesson.\n\nRemaining views: ${Math.max(0, viewsLeft - 1)}`);
+            loadButtons();
+          })
+          .catch((error) => {
+            console.error("Failed to decrement lesson view:", error);
+            localStorage.removeItem(watchGuardKey);
+            watchSessionDeducted = false;
+          });
+      }
+
+      watchSessionTimer = setInterval(() => {
+        if (!playerReady || !player || typeof player.getCurrentTime !== "function") return;
+        const currentTime = Number(player.getCurrentTime() || 0);
+        if (!watchSessionStarted) {
+          watchSessionStarted = true;
+          watchSessionSeconds = 0;
+        }
+        watchSessionSeconds = Math.max(watchSessionSeconds, Math.floor(currentTime));
+        if (watchSessionSeconds >= 30 * 60) {
+          attemptViewDeduction();
+          if (watchSessionTimer) clearInterval(watchSessionTimer);
+        }
+      }, 1000);
+
+      ensureYouTubeApi(() => {
+        player = new window.YT.Player(playerId, {
+          videoId,
+          playerVars: {
+            autoplay: 1,
+            rel: 0,
+            modestbranding: 1,
+            controls: 0,
+            fs: 1,
+            playsinline: 1,
+            enablejsapi: 1
+          },
+          events: {
+            onReady: () => {
+              playerReady = true;
+              stage?.classList.add("is-loading");
+              player.playVideo();
+              syncPlayState();
+              syncProgress();
+              timer = setInterval(syncProgress, 250);
+            },
+            onStateChange: (event) => {
+              setLoadingVisual(event.data);
+              syncPlayState();
+            }
+          }
+        });
+      });
+    };
+
+    loadButtons();
+  </script>
+
+  <script>
+    const menuBtn = document.getElementById('menuBtn');
+    const sideMenu = document.getElementById('sideMenu');
+    const overlay = document.getElementById('menuOverlay');
+    const closeMenu = document.getElementById('closeMenu');
+
+    function openMenu() {
+      sideMenu.classList.add('open');
+      overlay.classList.add('show');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMenuPanel() {
+      sideMenu.classList.remove('open');
+      overlay.classList.remove('show');
+      document.body.style.overflow = '';
+    }
+
+    if (menuBtn) menuBtn.addEventListener('click', openMenu);
+    if (closeMenu) closeMenu.addEventListener('click', closeMenuPanel);
+    if (overlay) overlay.addEventListener('click', closeMenuPanel);
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') closeMenuPanel();
+    });
+  </script>
+</body>
+</html>

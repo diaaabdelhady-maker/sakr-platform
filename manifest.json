@@ -1,19 +1,19 @@
 {
-  "name": "AMR SAKR",
-  "short_name": "AMR SAKR",
-  "description": "AMR SAKR - Best science education platform",
+  "name": "SAKR PLATFORM",
+  "short_name": "SAKR PLATFORM",
+  "description": "SAKR PLATFORM- For all preparatory grades",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "background_color": "#04043b",
   "theme_color": "#7c3aed",
-  "orientation": "portrait-primary",
+  "orientation": "any",
   "lang": "en",
   "dir": "ltr",
   "icons": [
     {
       "src": "logo.png",
-      "sizes": "192x192",
+      "sizes": "180x180",
       "type": "image/png",
       "purpose": "any"
     },

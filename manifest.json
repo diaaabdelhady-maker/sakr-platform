@@ -5,12 +5,8 @@
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "radial-gradient(circle at top, rgba(255, 255, 255, 0.22), transparent 12%),
-        radial-gradient(circle at 20% 20%, rgba(255, 215, 0, 0.14), transparent 18%),
-        radial-gradient(circle at 80% 0%, rgba(124, 58, 237, 0.25), transparent 20%),
-        linear-gradient(145deg, #04043b 0%, #06066b 30%, #01011f 65%, #00000e 100%);
-   ",
-  "theme_color": "linear-gradient(135deg, #ffe46b 0%, #ffd700 45%, #ffef99 100%);
+  "background_color": "#04043b",
+  "theme_color": "#ffd721";
   ",
   "orientation": "any",
   "lang": "en",

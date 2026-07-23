@@ -1,5 +1,16 @@
 const CACHE_NAME = "sakr-cache-v1";
+const CACHE = "v1";
 
+self.addEventListener("install", event => {
+  event.waitUntil(
+    caches.open(CACHE).then(cache => {
+      return cache.addAll([
+        "offline.html",
+        "icon.png"
+      ]);
+    })
+  );
+});
 const OFFLINE_PAGE = "offline.html";
 
 self.addEventListener("install", (event) => {

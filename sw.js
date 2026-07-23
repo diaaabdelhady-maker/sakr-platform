@@ -6,8 +6,11 @@ self.addEventListener("install", event => {
     caches.open(CACHE).then(cache => {
       return cache.addAll([
         "offline.html",
-        "icon.png"
+        "logo.png"
+        "wifi_off.svg"
+      "style.css"
       ]);
+      
     })
   );
 });

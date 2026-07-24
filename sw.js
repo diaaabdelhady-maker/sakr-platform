@@ -1,34 +1,41 @@
-const CACHE_NAME = "sakr-cache-v1";
-const CACHE = "v1";
-
-self.addEventListener("install", event => {
-  event.waitUntil(
-    caches.open(CACHE).then(cache => {
-      return cache.addAll([
-        "offline.html",
-        "logo.png"
-        "wifi_off.svg"
-      "style.css"
-      ]);
-      
-    })
-  );
-});
+const CACHE_NAME = "sakr-cache-v2";
 const OFFLINE_PAGE = "offline.html";
 
+const FILES_TO_CACHE = [
+  "./",
+  "offline.html",
+  "style.css",
+  "logo.png",
+  "wifi_off.svg"
+];
+
+// Install
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.add(OFFLINE_PAGE);
+      return cache.addAll(FILES_TO_CACHE);
     })
   );
+
   self.skipWaiting();
 });
 
+// Activate
 self.addEventListener("activate", (event) => {
-  event.waitUntil(self.clients.claim());
+  event.waitUntil(
+    caches.keys().then((keys) => {
+      return Promise.all(
+        keys
+          .filter((key) => key !== CACHE_NAME)
+          .map((key) => caches.delete(key))
+      );
+    })
+  );
+
+  self.clients.claim();
 });
 
+// Fetch
 self.addEventListener("fetch", (event) => {
   if (event.request.mode === "navigate") {
     event.respondWith(
@@ -36,5 +43,12 @@ self.addEventListener("fetch", (event) => {
         return caches.match(OFFLINE_PAGE);
       })
     );
+    return;
   }
+
+  event.respondWith(
+    caches.match(event.request).then((response) => {
+      return response || fetch(event.request);
+    })
+  );
 });
